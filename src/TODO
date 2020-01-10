@@ -1,0 +1,67 @@
+Perltidy TODO List
+    This is a partial "wish-list" of features to add and things to do.
+
+  Perltidy not idempotent
+    Perltidy does a single pass but iterates locally to try to satisfy the
+    various constraints and formatting parameters, but in some cases it can
+    take a second pass to reach a stable format, particularly when major
+    format style changes are made. It would be useful to have a flag to
+    force a second pass, say --passes=2.
+
+    For now, a workaround for a single file is
+
+      perltidy file.pl -st | perltidy -o file.tdy
+
+  The starting indentation level is not correctly guessed when tabs are used
+    When formatting a snippet which does not begin at zero indentation,
+    perltidy must guess the starting indentation. The -sil flag can be used
+    to specify this, but this is tedious. In general we cannot know the
+    indentation and can only guess, but we can at least require that if
+    perltidy is run twice on the same snippet, with the same parameters,
+    that the indentation be correctly guessed on the second pass. Currently,
+    this is only true if there are no tabs in the leading whitespace. A
+    patch has been submitted to fix this but it needs a little work still.
+
+  -b does not work through the Tidy module
+    The use of -b in the following does not work:
+
+       use Perl::Tidy ();
+       use File::Spec;
+
+       my $file = File::Spec->catfile( $dir,
+          $filename );
+
+       Perl::Tidy::perltidy(
+          source     => $file,
+          argv        => '-b',
+          perltidyrc => $perltidyrc,
+       );
+
+    A temporary workaround is:
+
+       Perl::Tidy::perltidy(
+          argv        => "-b $file",
+          perltidyrc => $perltidyrc,
+       );
+
+  Improved Vertical Alignment
+    There are still many opportunities for improving vertical alignment.
+
+  Documentation
+    A FAQ is needed to explain some of the more subtle formatting issues,
+    and to give examples of different styles.
+
+    The -formatter callback object documentation is incomplete.
+
+  HTML writer
+    The HTML writer does not colorize interpolated identifiers in here
+    documents or quoted strings. The tokenizer outputs interpolation
+    information for here docs; it still needs to be updated to do this for
+    multi-line quotes. Then code needs to be written to scan for and markup
+    identifiers.
+
+Things which have been suggested but will not be done
+  Recursive file processing
+    A -r flag might be nice, but this is best handled by an exterior shell
+    script.
+
