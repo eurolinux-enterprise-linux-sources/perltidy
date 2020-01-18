@@ -1,11 +1,13 @@
 Name:           perltidy
 Version:        20121207
-Release:        1%{?dist}
+Release:        3%{?dist}
 Summary:        Tool for indenting and reformatting Perl scripts
 
 License:        GPLv2+
 URL:            http://perltidy.sourceforge.net/
 Source:         http://downloads.sourceforge.net/perltidy/Perl-Tidy-%{version}.tar.gz
+# Fix CVE-2014-2277 (Insecure temporary file creation)
+Patch0:         Fix-CVE-2014-2277.patch
 
 BuildArch:      noarch
 BuildRequires:  perl(ExtUtils::MakeMaker)
@@ -31,6 +33,7 @@ because it is very good at localizing errors.
 
 %prep
 %setup -q -n Perl-Tidy-%{version}
+%patch0 -p1
 rm -f docs/perltidy.1 examples/pt.bat
 f=CHANGES ; iconv -f iso-8859-1 -t utf-8 $f > $f.utf8 ; mv $f.utf8 $f
 
@@ -60,6 +63,13 @@ make test
 
 
 %changelog
+* Tue Mar 11 2014 Jitka Plesnikova <jplesnik@redhat.com> - 20121207-3
+- Resolves: rhbz#1074723 / CVE-2014-2277
+- Fix a bogus date in changelog
+
+* Fri Dec 27 2013 Daniel Mach <dmach@redhat.com> - 20121207-2
+- Mass rebuild 2013-12-27
+
 * Tue Dec 11 2012 Ville Skyttä <ville.skytta@iki.fi> - 20121207-1
 - Update to 20121207.
 
@@ -150,7 +160,7 @@ make test
 * Thu Jun 15 2006 Ville Skyttä <ville.skytta@iki.fi> - 20060614-1
 - 20060614, specfile cleanups, include examples in docs.
 
-* Fri Apr  7 2005 Michael Schwendt <mschwendt[AT]users.sf.net>
+* Fri Apr  8 2005 Michael Schwendt <mschwendt[AT]users.sf.net>
 - rebuilt
 
 * Thu Dec 16 2004 Ville Skyttä <ville.skytta@iki.fi> - 0:20031021-1
